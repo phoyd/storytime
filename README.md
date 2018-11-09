@@ -6,7 +6,9 @@
  with the project sources, making it an easy tooling choice for text transformations like this. 
  ## Usage :
  There not much to know. The command line is:
+
  `lua storytime.lua [--language <language>] [--prefix <comment prefix>] <input file>`
+
  Output goes to stdout and there is a [Makefile](Makefile.md) which shows hoe to the use it.  
  
  So what we want to do is: Read a file, find the comment files we want to lift to the text level and write them out, while putting source lines into source fences.
