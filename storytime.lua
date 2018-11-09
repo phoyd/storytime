@@ -9,15 +9,16 @@
 -->
 --> `lua storytime.lua [--language <language>] [--prefix <comment prefix>] <input file>`
 -->
---> Output goes to stdout and there is a [Makefile](Makefile.md) which shows hoe to the use it.  
+--> Output goes to stdout and there is a [Makefile](Makefile.md) which shows how to use it.  
 --> 
---> So what we want to do is: Read a file, find the comment files we want to lift to the text level and write them out, while putting source lines into source fences.
+--> ## Implementation
+--> So what we want to do is this: Read a file, find the comment files we want to lift to the text level and write them out, while putting source lines into source fences.
 -->
---> We start by  defining the language of the code we would like to pass through `storytime`. Since we don't try to autodetect the language, we need a default.
+--> We start by defining the language of the code we would like to pass through `storytime`. Since we don't try to autodetect the language, we need a default.
 local language="lua"
 --> Let's say, that these language names are the ones [Linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml) uses, because Linguist is the syntax highlighter of github and we put the value of `language` into the code fences we generate. 
 -->
---> Next, I preparea a list of regexprs for line comments in the language, that shall contain wrapped markdown and a variable that is later set to the prefix for the user language. I like the arrow style for markdown comments, so my defaults are exactly that.
+--> Next, we prepare a list of regexprs for line comments in the language, that shall contain wrapped markdown and a variable that is later set to the prefix for the user language. I like the arrow style for markdown comments, so the defaults are exactly that.
 local prefix_map={
   lua="%-%->[%s\n]",
   sql="%-%->[%s\n]",
@@ -28,10 +29,9 @@ local prefix_map={
 local story_prefix=nil
 --> This can be changed later with the --prefix command line argument.
 --> 
---> Now we define the main processing function. `unwrap_file` simply reads from `file` and 
---> Read all the files and pass them to a print function. 
+--> Now we define the main processing function. `unwrap_file` simply reads all lines from `file` and passes them to a print function, after rewriting the lines. 
 function unwrap_file(file, out)
-  local last="story" --> type of the last line (code, story)
+  local last="story" --> type of the last line ("code" or "story")
   local lineno=0 --> count the current line number, we want these in the code fences.
   for l in file:lines() do  
     l=l.."\n" --> EOL is removed from the lines() iterator, but we'd like to have it. 
@@ -54,7 +54,7 @@ function unwrap_file(file, out)
         out(string.format('```%s\n', language, lineno)) --> How do I do linenumbers? 
         last="code"
       end
-      out(l)
+      out(l) --> write the code line 
     end
 --> We're at end of the file. If we are still in "code" mode, then there is a code 
 --> block open that we need to close.
@@ -92,6 +92,6 @@ if fname then
 end
 --> And now process the file.
 unwrap_file(infile,io.write)
---> That's it. We close the input file, because we are nice and are finished.
+--> That's it. We close the input file, because we are nice.
 infile:close() --> Closing stdin is OK.
 --> ~ _Fin_ ~ 
