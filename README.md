@@ -86,7 +86,7 @@ while i<=#arg do
   if arg[i]=="--prefix" then
     story_prefix = (i+1<=#arg) and arg[i+1] or error("missing argument to --prefix")
 ```
- > The above is the Lua equivalent of a ternary operator. In C/C++ this would be ``(i+1<argc)?argv[i]:perror("arg")` or something like that.
+ > The above is the Lua equivalent of a ternary operator. In C/C++ this would be `(i+1<argc)?argv[i]:perror("arg")` or something like that.
 ```lua startFrom=76
     i=i+2
   elseif arg[i]=="--language" then 
