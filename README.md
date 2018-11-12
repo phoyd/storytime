@@ -71,7 +71,7 @@ function unwrap_file(output, input)
  block open that we need to close.
 ```lua startFrom=62
   end
-  if last=="code" then --> close preceeding code block
+  if last=="code" then --> close preceding code block
     output("```\n")
     last="story"
   end
@@ -80,7 +80,7 @@ end
 
  ### Push-Pull mismatch.
  `unwrap_file` processes it's data as a **push-pull** filter: it **pulls** data from `input` (an iterator) an **pushes** the result to `output` (a function). This is not ideal, because it makes it hard to compose filters. If we treat `output` as the next stage of the processing pipeline, then it would get it's data pushed in. It would be a **push-push** filter. Since a push-push filter is called repeatedly, it can not held its state in the invocation frame and needs to handle resuming execution. 
- That's error prone and it also blurrs the intent of the code, because we'll end up with boilerplate code to adapt the function to its usage. But in Lua, there is a simple solution to that problem: Any pull-push function can be converter into a **pull-pull** function (a function taking an iterator and returning an iterator) using continuations. Here's the generic function for this conversion: 
+ That's error prone and it also blurs the intent of the code, because we'll end up with boilerplate code to adapt the function to its usage. But in Lua, there is a simple solution to that problem: Any pull-push function can be converter into a **pull-pull** function (a function taking an iterator and returning an iterator) using continuations. Here's the generic function for this conversion: 
 ```lua startFrom=72
 
 function generator(f,...) 
@@ -141,7 +141,7 @@ if fname then
   infile=assert(io.open(fname,"r"))
 end
 ```
- We now rocess the file. This could be done by calling `unwrap_file(io.write, infile:lines())` directly, but we want to be prepared to add passes to in- and output, so we use the `generator` function to turn `unwrap_file` into a function returning an iterator: 
+ We now process the file. This could be done by calling `unwrap_file(io.write, infile:lines())` directly, but we want to be prepared to add passes to in- and output, so we use the `generator` function to turn `unwrap_file` into a function returning an iterator: 
 ```lua startFrom=125
 local proc=generator(unwrap_file,infile:lines())
 for line in proc do
